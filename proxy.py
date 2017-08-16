@@ -1,6 +1,13 @@
 from __future__ import print_function
 import argparse
+import sys
 from twisted.internet import reactor, protocol
+
+
+def _print(*parts):
+    sys.stdout.write(' '.join(map(str, parts)))
+    sys.stdout.write('\n')
+    sys.stdout.flush()
 
 
 class ClientProtocol(protocol.Protocol):
@@ -8,7 +15,7 @@ class ClientProtocol(protocol.Protocol):
         self.conn_id = conn_id
 
     def dataReceived(self, data):
-        print("server %s" % self.conn_id, data)
+        _print("server %s" % self.conn_id, data)
         self.server_protocol.transport.write(data)
 
     def connectionLost(self, reason):
@@ -31,7 +38,7 @@ class ServerProtocol(protocol.Protocol):
         self.conn_id = conn_id
 
     def dataReceived(self, data):
-        print("client %d" % self.conn_id, data)
+        _print("client %d" % self.conn_id, data)
         self.client_protocol.transport.write(data)
 
     def connectionLost(self, reason):
